@@ -2,8 +2,10 @@
 ################################################################################################################################################################################################################################################################################################################################################################################
 # importing necessary modules
 from tkinter import *
+import pickle
 import pandas as pd
 import numpy as np
+
 # importing from rdkit
 from rdkit import Chem
 from rdkit.Chem import Descriptors, Crippen
@@ -15,7 +17,6 @@ from rdkit.Chem import Descriptors, Crippen
 
 def aromatic_proportion(molecule):
     
-    
     # function for determining number of aromatic atoms in a molecule
     bool_lst = [molecule.GetAtomWithIdx(i).GetIsAromatic() for i in range(molecule.GetNumAtoms())]
     num_aa = []
@@ -26,8 +27,13 @@ def aromatic_proportion(molecule):
     return result
 
 def solve_descriptors(smiles, verbose=False):
-    i=0
+    
     smiles = smiles.replace(' ', '')
+    if smiles == '':
+        return
+    i=0
+    smiles = 'C,' + smiles
+    
     smiles = smiles.split(',')
     desc_data=np.arange(1,1)
     labels = ['logP', 'MolWt', 'NumOfRB', 'AP']
@@ -51,13 +57,16 @@ def solve_descriptors(smiles, verbose=False):
             desc_data=np.vstack([desc_data, row])
         i+=1
     
-    print(desc_data,labels)
+  
     descriptors = pd.DataFrame(data=desc_data,columns=labels)
+    load_model = pickle.load(open('solubility_model.pkl', 'rb'))
+    prediction = load_model.predict(descriptors)
+    desc_label['text'] = str(descriptors[1:])
+    pred_label['text'] = 'logS: '+str(prediction[1:])
     
 
-print(pd.DataFrame(data=np.array([ 2.1965, 72.151,   2,      0    ]), columns=['logP', 'MolWt', 'NumOfRB', 'AP']))
 root = Tk()
-root.title('Delaney\'s Solubility Calculator')
+root.title('Delaney\'s Solubility Predictor')
 root.resizable(width=False,height=False)
 
 canvas = Canvas(root, height=600, width=500)
@@ -75,8 +84,11 @@ calculate.place(x=200,y=275,width=100, height=50)
 lower_frame = Frame(root)
 lower_frame.place(x=50,y=350, width=400, height= 225)
 
-output = Label(lower_frame)
-output.place(relx=0,rely=0)
+desc_label = Label(lower_frame)
+desc_label.pack()
+
+pred_label = Label(lower_frame)
+pred_label.pack()
 
 
 root.mainloop()

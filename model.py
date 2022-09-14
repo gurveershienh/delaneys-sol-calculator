@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import linear_model
-from sklearn.metrics import mean_squared_error, r2_score
 
 df = pd.read_csv('delaney-descriptors.csv')
 
@@ -29,4 +28,4 @@ plt.ylabel('Predicted LogS')
 plt.xlabel('Experimental LogS')
 plt.show()
 
-pickle.dump(model, open('solubility_model.pkl', 'wb'))
+##pickle.dump(model, open('solubility_model.pkl', 'wb'))
