@@ -19,5 +19,5 @@ Setting up virtual environment using conda 4.14.0:
   conda install libraries <----- repeat command for each element in libraries above.
 
 Run app.py in terminal for execution:
-  python app.py <----- Ensure terminal is using Python 3.7.9
+  python app.py <----- ensure terminal is using Python 3.7.9
   
